@@ -87,44 +87,58 @@ export class Grid9 {
 	}
 }
 
-export function generate_path(randy: Randy, length: number) {
-	const path: Place[] = [new Place([0, 0])]
-	const banned_direction = cardinal.north
+export function walk_new_path({randy, steps, banned_direction}: {
+		randy: Randy,
+		steps: number,
+		banned_direction?: V2,
+	}) {
 
-	const position_is_already_taken = (position: V2) => (
-		path.some(place => v2.equal(place.vector, position))
-	)
+	const path: Place[] = []
+	path.push(new Place([0, 0]))
+	steps -= 1
 
-	function generate_next_step() {
-		const last = path.at(-1)!
+	loop(steps, function step_forward() {
+		const previous_place = path.at(-1)!
 
-		const possible_positions = Object.values(cardinal)
-			.filter(direction => !v2.equal(direction, banned_direction))
-			.map(cardinal => v2.add(last.vector, cardinal))
-			.filter(position => !position_is_already_taken(position))
+		const possible_next_positions = Object.values(cardinal)
+			.filter(remove_banned_direction(banned_direction))
+			.map(translate_to_new_position(previous_place))
+			.filter(remove_occupied_positions(path))
 
-		if (possible_positions.length < 1)
+		if (possible_next_positions.length === 0)
 			throw new Error("no possible positions to generate next step")
 
-		const place = new Place(randy.select(possible_positions))
-		path.push(place)
-	}
+		const next_position = randy.select(possible_next_positions)
+		const next_place = new Place(next_position)
 
-	loop(length - 1, generate_next_step)
+		open_junctions_between(previous_place, next_place)
+		path.push(next_place)
+	})
+
 	return path
 }
 
-export function open_junctions_along_path(path: Place[]) {
-	let previous: undefined | Place
+function open_junctions_between(a: Place, b: Place) {
+	const direction_a = v2.subtract(b.vector, a.vector)
+	const direction_b = v2.subtract(a.vector, b.vector)
+	a.junctions.open(direction_a)
+	b.junctions.open(direction_b)
+}
 
-	for (const place of path) {
-		if (previous) {
-			const direction_a = v2.subtract(place.vector, previous.vector)
-			const direction_b = v2.subtract(previous.vector, place.vector)
-			previous.junctions.open(direction_a)
-			place.junctions.open(direction_b)
-		}
-		previous = place
+function remove_banned_direction(banned_direction?: V2) {
+	return (direction: V2) => {
+		if (banned_direction)
+			return !v2.equal(direction, banned_direction)
+		else
+			return true
 	}
+}
+
+function translate_to_new_position(previous: Place) {
+	return (direction: V2) => v2.add(previous.vector, direction)
+}
+
+function remove_occupied_positions(path: Place[]) {
+	return (position: V2) => !path.some(place => v2.equal(place.vector, position))
 }
 

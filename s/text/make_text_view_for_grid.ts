@@ -39,7 +39,6 @@ export function ascertain_bounding_box(tiles: Place[]) {
 export function make_text_view_for_dungeon(tiles: Place[]) {
 
 	const bounding_box = ascertain_bounding_box(tiles)
-	console.log("bounding_box", bounding_box)
 
 	const offset_to_fit_at_origin_in_text_coordinates: V2 = v2.multiply([
 		-bounding_box.left,
