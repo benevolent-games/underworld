@@ -1,5 +1,5 @@
 
-import {Cell, Grid9} from "./scratch.js"
+import {Place, Grid9} from "./scratch.js"
 import {make_text_view_for_dungeon, make_text_view_for_grid} from "./text/make_text_view_for_grid.js"
 
 const grid = new Grid9()
@@ -57,8 +57,15 @@ grid.get([2, 2]).junctions.west = true
 
 console.log(make_text_view_for_grid(grid).render())
 
-console.log(make_text_view_for_dungeon([
-	new Cell([0, 0]),
-	new Cell([1, 0]),
-]).render())
+const tiles = [
+	new Place([0, 0]),
+	new Place([1, 0]),
+]
+
+tiles[0].junctions.west = true
+tiles[0].junctions.east = true
+tiles[1].junctions.west = true
+tiles[1].junctions.south = true
+
+console.log(make_text_view_for_dungeon(tiles).render())
 
