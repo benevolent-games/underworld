@@ -1,19 +1,16 @@
 
 export type Random = () => number
 
-export function seed_random(seed: number): Random {
-	function random() {
-		seed = Math.imul(48271, seed) | 0 % 2147483647
-		return (seed & 2147483647) / 2147483648
+export class Randy {
+	static seed(seed: number): Random {
+		function random() {
+			seed = Math.imul(48271, seed) | 0 % 2147483647
+			return (seed & 2147483647) / 2147483648
+		}
+		random() // discard first value
+		return random
 	}
 
-	// discard first value
-	random()
-
-	return random
-}
-
-export class Randy {
 	constructor(
 		public readonly random: Random
 	) {}

@@ -1,71 +1,14 @@
 
-import {Place, Grid9} from "./scratch.js"
-import {make_text_view_for_dungeon, make_text_view_for_grid} from "./text/make_text_view_for_grid.js"
+import {Randy} from "./tools/randy.js"
+import {generate_path, open_junctions_along_path} from "./scratch.js"
+import {make_text_view_for_dungeon} from "./text/make_text_view_for_grid.js"
 
-const grid = new Grid9()
+const randy = new Randy(Randy.seed(98))
+const tiles = generate_path(randy, 5)
+open_junctions_along_path(tiles)
 
-//
-
-grid.get([0, 0]).junctions.north = false
-grid.get([0, 0]).junctions.east = true
-grid.get([0, 0]).junctions.south = true
-grid.get([0, 0]).junctions.west = false
-
-grid.get([1, 0]).junctions.north = true
-grid.get([1, 0]).junctions.east = false
-grid.get([1, 0]).junctions.south = false
-grid.get([1, 0]).junctions.west = true
-
-grid.get([2, 0]).junctions.north = false
-grid.get([2, 0]).junctions.east = false
-grid.get([2, 0]).junctions.south = false
-grid.get([2, 0]).junctions.west = false
-
-//
-
-grid.get([0, 1]).junctions.north = true
-grid.get([0, 1]).junctions.east = true
-grid.get([0, 1]).junctions.south = false
-grid.get([0, 1]).junctions.west = false
-
-grid.get([1, 1]).junctions.north = false
-grid.get([1, 1]).junctions.east = true
-grid.get([1, 1]).junctions.south = false
-grid.get([1, 1]).junctions.west = true
-
-grid.get([2, 1]).junctions.north = false
-grid.get([2, 1]).junctions.east = false
-grid.get([2, 1]).junctions.south = true
-grid.get([2, 1]).junctions.west = true
-
-//
-
-grid.get([0, 2]).junctions.north = false
-grid.get([0, 2]).junctions.east = false
-grid.get([0, 2]).junctions.south = false
-grid.get([0, 2]).junctions.west = false
-
-grid.get([1, 2]).junctions.north = false
-grid.get([1, 2]).junctions.east = true
-grid.get([1, 2]).junctions.south = true
-grid.get([1, 2]).junctions.west = false
-
-grid.get([2, 2]).junctions.north = true
-grid.get([2, 2]).junctions.east = false
-grid.get([2, 2]).junctions.south = false
-grid.get([2, 2]).junctions.west = true
-
-console.log(make_text_view_for_grid(grid).render())
-
-const tiles = [
-	new Place([0, 0]),
-	new Place([1, 0]),
-]
-
-tiles[0].junctions.west = true
-tiles[0].junctions.east = true
-tiles[1].junctions.west = true
-tiles[1].junctions.south = true
-
-console.log(make_text_view_for_dungeon(tiles).render())
+console.log(
+	make_text_view_for_dungeon(tiles)
+		.render({border: true})
+)
 

@@ -1,5 +1,5 @@
 
-import {V2} from "../tools/v2.js"
+import {V2, v2} from "../tools/v2.js"
 import {between} from "../tools/numb.js"
 import {loop, loop2d} from "../tools/loopy.js"
 
@@ -51,10 +51,9 @@ export class TextView {
 		return this.characters[y][x]
 	}
 
-	draw(start_x: number, start_y: number, graphic: TextView) {
-		graphic.loop((character, [graphic_x, graphic_y]) => {
-			const view_x = start_x + graphic_x
-			const view_y = start_y + graphic_y
+	draw(start_vector: V2, graphic: TextView) {
+		graphic.loop((character, graphic_vector) => {
+			const [view_x, view_y] = v2.add(start_vector, graphic_vector)
 			if (!TextView.is_character_blank(character))
 				this.characters[view_y][view_x] = character
 		})
@@ -64,18 +63,26 @@ export class TextView {
 		loop2d(this.dimensions, v => fun(this.get(v), v))
 	}
 
-	render() {
-		const vertical = "│"
-		let horizontal = ""
-		loop(this.width, () => horizontal += "─")
+	render({border = false}: {border?: boolean} = {}) {
 
-		return [
-			"╭" + horizontal + "╮",
-			this.characters
-				.map(line => vertical + line.join("") + vertical)
-				.join("\n"),
-			"╰" + horizontal + "╯",
-		].join("\n")
+		if (border) {
+			const vertical = "│"
+			let horizontal = ""
+			loop(this.width, () => horizontal += "─")
+			return [
+				"╭" + horizontal + "╮",
+				this.characters
+					.map(line => vertical + line.join("") + vertical)
+					.join("\n"),
+				"╰" + horizontal + "╯",
+			].join("\n")
+		}
+
+		else {
+			return this.characters
+				.map(line => line.join(""))
+				.join("\n")
+		}
 	}
 }
 

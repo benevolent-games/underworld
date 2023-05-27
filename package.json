@@ -19,7 +19,8 @@
 		"watch": "run-p watch-typescript watch-test",
 		"http": "http-server x",
 		"start": "run-p http watch",
-		"test": "node x/tests.test.js"
+		"test": "node x/tests.test.js",
+		"debug": "node --inspect-brk x/tests.test.js"
 	},
 	"keywords": [],
 	"devDependencies": {

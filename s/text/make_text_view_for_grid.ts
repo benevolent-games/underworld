@@ -1,59 +1,83 @@
 
 import {V2, v2} from "../tools/v2.js"
-import {PlaceGraphics, graphics} from "./graphics.js"
 import {TextView} from "./text_view.js"
 import {Place, Grid9} from "../scratch.js"
+import {PlaceGraphics, graphics} from "./graphics.js"
+
+export function ascertain_bounding_box(tiles: Place[]) {
+	let left: number | undefined
+	let right: number | undefined
+	let top: number | undefined
+	let bottom: number | undefined
+
+	for (const {vector: [x, y]} of tiles) {
+		if (left === undefined || x < left!)
+			left = x
+
+		if (right === undefined || x > right!)
+			right = x
+
+		if (top === undefined || y < top!)
+			top = y
+
+		if (bottom === undefined || y > bottom!)
+			bottom = y
+	}
+
+	return {
+		left: left!,
+		right: right!,
+		top: top!,
+		bottom: bottom!,
+		dimensions: [
+			1 + right! - left!,
+			1 + bottom! - top!,
+		] as V2,
+	}
+}
 
 export function make_text_view_for_dungeon(tiles: Place[]) {
 
-	const extent = {left: 0, right: 0, top: 0, bottom: 0}
+	const bounding_box = ascertain_bounding_box(tiles)
+	console.log("bounding_box", bounding_box)
 
-	for (const tile of tiles) {
-		const {vector: [x, y]} = tile
-		if (x < extent.left) extent.left = x
-		if (x > extent.right) extent.right = x
-		if (y < extent.top) extent.top = y
-		if (y > extent.bottom) extent.bottom = y
-	}
+	const offset_to_fit_at_origin_in_text_coordinates: V2 = v2.multiply([
+		-bounding_box.left,
+		-bounding_box.top,
+	], graphics.tile.box.dimensions)
 
-	const offset: V2 = [-extent.left, -extent.top]
-
-	const tileDimensions = v2.add([1, 1], [
-		extent.right - extent.left,
-		extent.bottom - extent.top,
-	])
-
-	const textCoordinates = {
-		from_tile_vector([x, y]: V2): V2 {
-			return v2.add(offset, [
-				x * graphics.tile.box.width,
-				y * graphics.tile.box.height,
-			])
-		},
-		from_cell_vector(x: number, y: number): V2 {
-			return [
-				x * graphics.cell.box.width,
-				y * graphics.cell.box.height,
-			]
-		},
-	}
-
-	const textView = new TextView(
-		textCoordinates.from_tile_vector(tileDimensions)
+	const tile_dimensions = v2.multiply(
+			bounding_box.dimensions,
+			graphics.tile.box.dimensions,
 	)
 
+	const textView = new TextView(tile_dimensions)
+
 	for (const tile of tiles) {
-		draw_place_with_junctions(textView, tile, graphics.tile)
+		draw_place_with_junctions(
+			textView,
+			tile,
+			graphics.tile,
+			offset_to_fit_at_origin_in_text_coordinates,
+		)
 	}
 
 	return textView
 }
 
-function draw_place_with_junctions(view: TextView, place: Place, graphic: PlaceGraphics) {
-	const [x, y] = place.vector
-	const view_x = x * graphic.box.width
-	const view_y = y * graphic.box.height
-	const draw = (graphic: TextView) => view.draw(view_x, view_y, graphic)
+function draw_place_with_junctions(
+		view: TextView,
+		place: Place,
+		graphic: PlaceGraphics,
+		offset: V2,
+	) {
+
+	const start_vector = v2.add(
+		v2.multiply(place.vector, graphic.box.dimensions),
+		offset,
+	)
+
+	const draw = (graphic: TextView) => view.draw(start_vector, graphic)
 
 	if (place.junctions.count > 0) {
 		draw(graphic.box)
@@ -77,7 +101,7 @@ export function make_text_view_for_grid(grid: Grid9) {
 	const view = new TextView([width * 3, height * 3])
 
 	grid.loop(cell => {
-		draw_place_with_junctions(view, cell, graphics.cell)
+		draw_place_with_junctions(view, cell, graphics.cell, [0, 0])
 
 		// const view_x = x * width
 		// const view_y = y * height
