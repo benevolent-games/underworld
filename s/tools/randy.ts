@@ -15,7 +15,7 @@ export class Randy {
 		public readonly random: Random
 	) {}
 
-	boolean(chance: number) {
+	roll(chance: number) {
 		return this.random() < chance
 	}
 

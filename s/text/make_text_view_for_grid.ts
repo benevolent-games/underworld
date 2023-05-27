@@ -1,7 +1,7 @@
 
 import {V2, v2} from "../tools/v2.js"
 import {TextView} from "./text_view.js"
-import {Place, Grid9} from "../scratch.js"
+import {Place} from "../primitives/place.js"
 import {PlaceGraphics, graphics} from "./graphics.js"
 
 export function ascertain_bounding_box(tiles: Place[]) {
@@ -93,40 +93,5 @@ function draw_place_with_junctions(
 		if (place.junctions.west)
 			draw(graphic.west)
 	}
-}
-
-export function make_text_view_for_grid(grid: Grid9) {
-	const {width, height} = graphics.cell.box
-	const view = new TextView([width * 3, height * 3])
-
-	grid.loop(cell => {
-		draw_place_with_junctions(view, cell, graphics.cell, [0, 0])
-
-		// const view_x = x * width
-		// const view_y = y * height
-		// const {count} = cell.junctions
-
-		// function rend(graphic: TextView) {
-		// 	view.draw(view_x, view_y, graphic)
-		// }
-
-		// if (count > 0) {
-		// 	rend(graphics.cell.box)
-
-		// 	if (cell.junctions.north)
-		// 		rend(graphics.cell.north)
-
-		// 	if (cell.junctions.east)
-		// 		rend(graphics.cell.east)
-
-		// 	if (cell.junctions.south)
-		// 		rend(graphics.cell.south)
-
-		// 	if (cell.junctions.west)
-		// 		rend(graphics.cell.west)
-		// }
-	})
-
-	return view
 }
 
