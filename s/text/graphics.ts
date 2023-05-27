@@ -39,7 +39,7 @@ export const graphics = {
 		·····
 	`),
 
-	big: TextView.graphic(`
+	bigcell: TextView.graphic(`
 		╔═════════════╗
 		║   ┊┊   ┊┊   ║
 		║┄┄┄┘└┄┄┄┘└┄┄┄║
@@ -51,7 +51,7 @@ export const graphics = {
 		╚═════════════╝
 	`),
 
-	big_north: TextView.graphic(`
+	bigcell_north: TextView.graphic(`
 		·······╬·······
 		···············
 		···············
@@ -63,7 +63,7 @@ export const graphics = {
 		···············
 	`),
 
-	big_east: TextView.graphic(`
+	bigcell_east: TextView.graphic(`
 		···············
 		···············
 		···············
@@ -75,7 +75,7 @@ export const graphics = {
 		···············
 	`),
 
-	big_south: TextView.graphic(`
+	bigcell_south: TextView.graphic(`
 		···············
 		···············
 		···············
@@ -87,7 +87,7 @@ export const graphics = {
 		·······╬·······
 	`),
 
-	big_west: TextView.graphic(`
+	bigcell_west: TextView.graphic(`
 		···············
 		···············
 		···············
