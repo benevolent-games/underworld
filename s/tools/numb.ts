@@ -1,11 +1,31 @@
 
-export function between(x: number, min: number, max: number) {
-	if (x < min)
-		return false
+export function min(value: number, min: number) {
+	return value < min
+		? min
+		: value
+}
 
-	if (x > max)
-		return false
+export function max(value: number, max: number) {
+	return value > max
+		? max
+		: value
+}
 
-	return true
+export function cap(value: number, min: number, max: number) {
+	return value < min
+		? min
+		: value > max
+			? max
+			: value
+}
+
+export function tween(value: number, min: number, max: number) {
+	const space = max - min
+	const amount = value - min
+	return amount / space
+}
+
+export function between(value: number, min: number, max: number) {
+	return value >= min && value <= max
 }
 

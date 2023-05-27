@@ -1,42 +1,63 @@
 
 import {Place} from "./place.js"
-import {V2} from "../tools/v2.js"
-import {loop2d} from "../tools/loopy.js"
+import {V2, v2} from "../tools/v2.js"
+import {loop} from "../tools/loopy.js"
 import {between} from "../tools/numb.js"
+import {cardinal} from "../tools/cardinal.js"
 
 export class Grid9 {
-	cells: Place[] = []
 
-	constructor() {
-		loop2d([3, 3], vector => this.cells.push(new Place(vector)))
+	static position_to_index([x, y]: V2) {
+		return (3 * y) + x
 	}
 
-	get([x, y]: V2) {
-		return this.cells[(3 * y) + x]
-	}
-
-	loop(fun: (cell: Place) => void) {
-		loop2d([3, 3], vector => fun(this.get(vector)))
-	}
-
-	is_in_bounds([x, y]: V2) {
+	static is_in_bounds([x, y]: V2) {
 		const min = 0
 		const max = 3
 		return between(x, min, max) && between(y, min, max)
 	}
 
-	find(vector: V2) {
-		return this.is_in_bounds(vector)
-			? this.get(vector)
+	static get_position_from_grid_center(direction: V2) {
+		return v2.add([1, 1], direction)
+	}
+
+	#slots: (Place | undefined)[] = (() => {
+		let cells: (Place | undefined)[] = []
+		loop(9, () => cells.push(undefined))
+		return cells
+	})()
+
+	get cells() {
+		return this.#slots.filter(slot => !!slot) as Place[]
+	}
+
+	at(vector: V2) {
+		return Grid9.is_in_bounds(vector)
+			? this.#slots[Grid9.position_to_index(vector)]
 			: undefined
 	}
 
-	neighbors({vector: [x, y]}: Place) {
+	insert(place: Place) {
+		if (!Grid9.is_in_bounds(place.vector))
+			throw new Error("cannot insert place out of grid9 bounds")
+
+		const index = Grid9.position_to_index(place.vector)
+		this.#slots[index] = place
+	}
+
+	available_around_position(vector: V2) {
+		return Object.values(cardinal)
+			.map(direction => v2.add(direction, vector))
+			.filter(vector => Grid9.is_in_bounds(vector))
+			.filter(vector => !this.at(vector))
+	}
+
+	neighbors(vector: V2) {
 		return {
-			north: this.find([x, y + 1]),
-			east: this.find([x + 1, y]),
-			west: this.find([x - 1, y]),
-			south: this.find([x, y - 1]),
+			north: this.at(v2.add(vector, cardinal.north)),
+			east: this.at(v2.add(vector, cardinal.east)),
+			south: this.at(v2.add(vector, cardinal.south)),
+			west: this.at(v2.add(vector, cardinal.west)),
 		}
 	}
 }

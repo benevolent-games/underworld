@@ -1,4 +1,6 @@
 
+import {cap as scalarCap} from "./numb.js"
+
 export type V2 = [number, number]
 
 export namespace v2 {
@@ -41,6 +43,29 @@ export namespace v2 {
 			a[0] - b[0],
 			a[1] - b[1],
 		]
+	}
+
+	export function applyBy(vector: V2, change: (a: number) => number): V2 {
+		return [
+			change(vector[0]),
+			change(vector[1]),
+		]
+	}
+
+	export function cap(vector: V2, min: number, max: number) {
+		return applyBy(vector, a => scalarCap(a, min, max))
+	}
+
+	export function negate(vector: V2): V2 {
+		return applyBy(vector, a => a * -1)
+	}
+
+	export function multiplyBy(vector: V2, factor: number): V2 {
+		return applyBy(vector, a => a * factor)
+	}
+
+	export function addBy(vector: V2, amount: number): V2 {
+		return applyBy(vector, a => a + amount)
 	}
 }
 

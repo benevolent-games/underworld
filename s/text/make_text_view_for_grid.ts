@@ -37,10 +37,9 @@ export function ascertain_bounding_box(tiles: Place[]) {
 }
 
 export function make_text_view_for_dungeon(tiles: Place[]) {
-
 	const bounding_box = ascertain_bounding_box(tiles)
 
-	const offset_to_fit_at_origin_in_text_coordinates: V2 = v2.multiply([
+	const offset_to_fit_at_origin: V2 = v2.multiply([
 		-bounding_box.left,
 		-bounding_box.top,
 	], graphics.tile.box.dimensions)
@@ -53,12 +52,28 @@ export function make_text_view_for_dungeon(tiles: Place[]) {
 	const textView = new TextView(tile_dimensions)
 
 	for (const tile of tiles) {
-		draw_place_with_junctions(
-			textView,
-			tile,
-			graphics.tile,
-			offset_to_fit_at_origin_in_text_coordinates,
-		)
+		if (tile.children) {
+			const offset_for_this_tile = v2.multiply(
+				tile.vector,
+				graphics.tile.box.dimensions,
+			)
+			for (const cell of tile.children.cells) {
+				draw_place_with_junctions(
+					textView,
+					cell,
+					graphics.cell,
+					v2.add(offset_to_fit_at_origin, offset_for_this_tile),
+				)
+			}
+		}
+		else {
+			draw_place_with_junctions(
+				textView,
+				tile,
+				graphics.tile,
+				offset_to_fit_at_origin,
+			)
+		}
 	}
 
 	return textView
@@ -78,20 +93,18 @@ function draw_place_with_junctions(
 
 	const draw = (graphic: TextView) => view.draw(start_vector, graphic)
 
-	if (place.junctions.count > 0) {
-		draw(graphic.box)
+	draw(graphic.box)
 
-		if (place.junctions.north)
-			draw(graphic.north)
+	if (place.junctions.north)
+		draw(graphic.north)
 
-		if (place.junctions.east)
-			draw(graphic.east)
+	if (place.junctions.east)
+		draw(graphic.east)
 
-		if (place.junctions.south)
-			draw(graphic.south)
+	if (place.junctions.south)
+		draw(graphic.south)
 
-		if (place.junctions.west)
-			draw(graphic.west)
-	}
+	if (place.junctions.west)
+		draw(graphic.west)
 }
 
