@@ -45,8 +45,8 @@ export function make_text_view_for_dungeon(tiles: Place[]) {
 	], graphics.tile.box.dimensions)
 
 	const tile_dimensions = v2.multiply(
-			bounding_box.dimensions,
-			graphics.tile.box.dimensions,
+		bounding_box.dimensions,
+		graphics.tile.box.dimensions,
 	)
 
 	const textView = new TextView(tile_dimensions)
@@ -75,6 +75,19 @@ export function make_text_view_for_dungeon(tiles: Place[]) {
 			)
 		}
 	}
+
+	const start = tiles.at(0)!
+	const end = tiles.at(-1)!
+
+	textView.draw(
+		offset_to_fit_at_origin,
+		graphics.start_tile,
+	)
+
+	textView.draw(
+		v2.add(offset_to_fit_at_origin, v2.multiply(end.vector, graphics.end_tile.dimensions)),
+		graphics.end_tile,
+	)
 
 	return textView
 }

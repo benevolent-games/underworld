@@ -1,4 +1,6 @@
 
+import {loop} from "./loopy.js"
+
 export type Random = () => number
 
 export class Randy {
@@ -29,8 +31,19 @@ export class Randy {
 		return Math.floor(this.random() * length)
 	}
 
-	select<T>(array: T[]) {
+	choose<T>(array: T[]) {
 		return array[this.index(array.length)]
+	}
+
+	select<T>(count: number, array: T[]) {
+		const copy = [...array]
+
+		if (count >= array.length)
+			return copy
+
+		const selection: T[] = []
+		loop(count, () => selection.push(this.yoink(copy)))
+		return selection
 	}
 
 	yoink<T>(array: T[]) {

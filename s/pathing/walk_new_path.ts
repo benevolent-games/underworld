@@ -1,10 +1,11 @@
 
-import {V2, v2} from "../tools/v2.js"
+import {V2} from "../tools/v2.js"
 import {loop} from "../tools/loopy.js"
 import {Randy} from "../tools/randy.js"
 import {Place} from "../primitives/place.js"
 import {cardinal} from "../tools/cardinal.js"
 import {open_junctions_between} from "./utils/open_junctions_between.js"
+import {remove_banned_direction, remove_occupied_positions, translate_to_new_position} from "./utils/filter_and_mapping_utils.js"
 
 export function walk_new_path({randy, steps, banned_direction}: {
 		randy: Randy,
@@ -13,6 +14,7 @@ export function walk_new_path({randy, steps, banned_direction}: {
 	}) {
 
 	const path: Place[] = []
+
 	path.push(new Place([0, 0]))
 	steps -= 1
 
@@ -27,7 +29,7 @@ export function walk_new_path({randy, steps, banned_direction}: {
 		if (possible_next_positions.length === 0)
 			throw new Error("no possible positions to generate next step")
 
-		const next_position = randy.select(possible_next_positions)
+		const next_position = randy.choose(possible_next_positions)
 		const next_place = new Place(next_position)
 
 		open_junctions_between(previous_place, next_place)
@@ -35,22 +37,5 @@ export function walk_new_path({randy, steps, banned_direction}: {
 	})
 
 	return path
-}
-
-function remove_banned_direction(banned_direction?: V2) {
-	return (direction: V2) => {
-		if (banned_direction)
-			return !v2.equal(direction, banned_direction)
-		else
-			return true
-	}
-}
-
-function translate_to_new_position(previous: Place) {
-	return (direction: V2) => v2.add(previous.vector, direction)
-}
-
-function remove_occupied_positions(path: Place[]) {
-	return (position: V2) => !path.some(place => v2.equal(place.vector, position))
 }
 
