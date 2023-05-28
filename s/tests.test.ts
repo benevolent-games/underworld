@@ -5,13 +5,13 @@ import {Grid9} from "./primitives/grid9.js"
 import {Place} from "./primitives/place.js"
 import {cardinal} from "./tools/cardinal.js"
 import {walk_new_path} from "./pathing/walk_new_path.js"
-import {make_text_view_for_dungeon} from "./text/make_text_view_for_grid.js"
+import {make_text_view_for_dungeon} from "./text/make_text_view_for_dungeon.js"
 import {open_junctions_between} from "./pathing/utils/open_junctions_between.js"
 
-const random = Randy.seed(20)
+const random = Randy.seed(1)
 const randy = new Randy(random)
 
-const steps = 7
+const steps = 3
 const number_of_big_tiles = Math.round(randy.between(1, 2))
 const banned_direction = cardinal.north
 
