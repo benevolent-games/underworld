@@ -13,7 +13,7 @@ export class Grid9 {
 
 	static is_in_bounds([x, y]: V2) {
 		const min = 0
-		const max = 3
+		const max = 2
 		return between(x, min, max) && between(y, min, max)
 	}
 

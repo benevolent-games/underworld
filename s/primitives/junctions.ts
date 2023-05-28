@@ -18,6 +18,24 @@ export class Junctions {
 		return c
 	}
 
+	get directions() {
+		const directions: V2[] = []
+
+		if (this.north)
+			directions.push(cardinal.north)
+
+		if (this.east)
+			directions.push(cardinal.east)
+
+		if (this.south)
+			directions.push(cardinal.south)
+
+		if (this.west)
+			directions.push(cardinal.west)
+
+		return directions
+	}
+
 	open(direction: V2) {
 		const is = (d: V2) => v2.equal(direction, d)
 

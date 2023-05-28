@@ -1,45 +1,87 @@
 
+import {V2, v2} from "./tools/v2.js"
 import {Randy} from "./tools/randy.js"
+import {Grid9} from "./primitives/grid9.js"
+import {Place} from "./primitives/place.js"
 import {cardinal} from "./tools/cardinal.js"
 import {walk_new_path} from "./pathing/walk_new_path.js"
 import {make_text_view_for_dungeon} from "./text/make_text_view_for_grid.js"
-import { Grid9 } from "./primitives/grid9.js"
-import { Place } from "./primitives/place.js"
+import {open_junctions_between} from "./pathing/utils/open_junctions_between.js"
 
-const random = Randy.seed(5)
+const random = Randy.seed(9)
 const randy = new Randy(random)
 
 const tiles = walk_new_path({
 	randy,
-	steps: 5,
+	steps: 8,
 	banned_direction: cardinal.north,
 })
 
-for (const tile of tiles) {
+const inner_tiles = tiles.slice(1, -1)
+
+for (const tile of inner_tiles) {
 	const should_subdivide_this_tile = randy.roll(3 / 4)
 
 	if (should_subdivide_this_tile) {
-		tile.children = new Grid9()
-		const position = Grid9.get_position_from_grid_center(cardinal.north)
-		const place = new Place(position)
-		place.junctions.north = true
-		tile.children.insert(place)
+		const grid = new Grid9()
+
+		function make_cell_to_match_outer_tile_junction(direction: V2) {
+			const position = Grid9.get_position_from_grid_center(direction)
+			const place = new Place(position)
+			place.junctions.open(direction)
+			grid.insert(place)
+		}
+
+		for (const direction of tile.junctions.directions)
+			make_cell_to_match_outer_tile_junction(direction)
+
+		// make path between start ane end cells
+		{
+			const [start, end] = grid.cells
+			let path: V2[] = [start.vector]
+			let done = false
+			const remove_steps_already_in_path = (vector: V2) =>
+				!path.some(v => v2.equal(v, vector))
+			while (!done) {
+				const previous = path.at(-1)!
+				const allowable_steps = (
+					Object.values(cardinal)
+						.map(direction => v2.add(previous, direction))
+						.filter(position => Grid9.is_in_bounds(position))
+						.filter(remove_steps_already_in_path)
+				)
+				if (allowable_steps.length === 0) {
+					path = [start.vector]
+					continue
+				}
+				const next_step = randy.select(allowable_steps)
+				path.push(next_step)
+				if (v2.equal(next_step, end.vector))
+					done = true
+			}
+			const cells = path.map(vector => {
+				let cell = grid.at(vector)
+				if (!cell) {
+					cell = new Place(vector)
+					grid.insert(cell)
+				}
+				return cell
+			})
+
+			let previous: Place | undefined
+			for (const cell of cells) {
+				if (previous)
+					open_junctions_between(previous, cell)
+				previous = cell
+			}
+		}
+
+		tile.children = grid
 	}
 }
 
-// const tile = new Place([0, 0])
-// tile.junctions.north = true
-// tile.children = new Grid9()
-
-// const position = Grid9.get_position_from_grid_center(cardinal.north)
-// const cell = new Place(position)
-// cell.junctions.north = true
-// tile.children.insert(cell)
-
-// const tiles = [tile]
-
 console.log(
 	make_text_view_for_dungeon(tiles)
-		.render({border: true})
+		.render({border: false})
 )
 
