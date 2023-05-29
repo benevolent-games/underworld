@@ -1,13 +1,15 @@
 
-import {V2} from "../tools/v2.js"
-import {loop} from "../tools/loopy.js"
-import {Randy} from "../tools/randy.js"
-import {Place} from "../primitives/place.js"
-import {cardinal} from "../tools/cardinal.js"
-import {open_junctions_between} from "./utils/open_junctions_between.js"
-import {remove_banned_direction, remove_occupied_positions, translate_to_new_position} from "./utils/filter_and_mapping_utils.js"
+import {V2} from "../../tools/v2.js"
+import {loop} from "../../tools/loopy.js"
+import {Randy} from "../../tools/randy.js"
+import {Place} from "../../primitives/place.js"
+import {cardinal} from "../../tools/cardinal.js"
+import {open_junctions_between} from "./open_junctions_between.js"
+import {remove_banned_direction} from "./utils/remove_banned_direction.js"
+import {remove_occupied_positions} from "./utils/remove_occupied_positions.js"
+import {translate_to_new_position} from "./utils/translate_to_new_position.js"
 
-export function walk_new_path({randy, steps, banned_direction}: {
+export function drunkenly_wander_new_path({randy, steps, banned_direction}: {
 		randy: Randy,
 		steps: number,
 		banned_direction?: V2,

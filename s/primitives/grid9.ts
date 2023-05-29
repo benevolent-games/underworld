@@ -37,12 +37,14 @@ export class Grid9 {
 			: undefined
 	}
 
-	insert(place: Place) {
-		if (!Grid9.is_in_bounds(place.vector))
-			throw new Error("cannot insert place out of grid9 bounds")
+	insert(...places: Place[]) {
+		for (const place of places) {
+			if (!Grid9.is_in_bounds(place.vector))
+				throw new Error("cannot insert place out of grid9 bounds")
 
-		const index = Grid9.position_to_index(place.vector)
-		this.#slots[index] = place
+			const index = Grid9.position_to_index(place.vector)
+			this.#slots[index] = place
+		}
 	}
 
 	available_around_position(vector: V2) {
