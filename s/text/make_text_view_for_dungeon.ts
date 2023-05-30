@@ -1,7 +1,8 @@
 
+import {graphics} from "./graphics.js"
+
 import {V2, v2} from "../tools/v2.js"
 import {TextView} from "./text_view.js"
-import {graphics} from "./graphics_alt.js"
 import {Place} from "../primitives/place.js"
 import {ascertain_bounding_box} from "./utils/ascertain_bounding_box.js"
 import {draw_place_with_junctions} from "./utils/draw_place_with_junctions.js"

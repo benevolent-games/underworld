@@ -1,9 +1,9 @@
 
 import {Place} from "./place.js"
 import {V2, v2} from "../tools/v2.js"
-import {loop} from "../tools/loopy.js"
 import {between} from "../tools/numb.js"
 import {cardinal} from "../tools/cardinal.js"
+import {loop, loop2d} from "../tools/loopy.js"
 
 export class Grid9 {
 
@@ -31,6 +31,15 @@ export class Grid9 {
 		return this.#slots.filter(slot => !!slot) as Place[]
 	}
 
+	query(position: V2) {
+		return Grid9.is_in_bounds(position)
+			? {
+				position,
+				cell: this.#slots[Grid9.position_to_index(position)],
+			}
+			: undefined
+	}
+
 	at(vector: V2) {
 		return Grid9.is_in_bounds(vector)
 			? this.#slots[Grid9.position_to_index(vector)]
@@ -47,19 +56,42 @@ export class Grid9 {
 		}
 	}
 
-	available_around_position(vector: V2) {
-		return Object.values(cardinal)
-			.map(direction => v2.add(direction, vector))
-			.filter(vector => Grid9.is_in_bounds(vector))
-			.filter(vector => !this.at(vector))
+	get vacancies() {
+		let empty: V2[] = []
+
+		loop2d([3, 3], position => {
+			if (!this.at(position))
+				empty.push(position)
+		})
+
+		return empty
 	}
 
-	neighbors(vector: V2) {
+	neighbors(position: V2) {
+		const cardinally = {
+			north: this.query(v2.add(position, cardinal.north)),
+			east: this.query(v2.add(position, cardinal.east)),
+			south: this.query(v2.add(position, cardinal.south)),
+			west: this.query(v2.add(position, cardinal.west)),
+		}
+
+		const vacancies: V2[] = []
+		const cells: Place[] = []
+
+		for (const result of Object.values(cardinally)) {
+			if (result) {
+				if (result.cell)
+					cells.push(result.cell)
+				else
+					vacancies.push(result.position)
+			}
+		}
+
 		return {
-			north: this.at(v2.add(vector, cardinal.north)),
-			east: this.at(v2.add(vector, cardinal.east)),
-			south: this.at(v2.add(vector, cardinal.south)),
-			west: this.at(v2.add(vector, cardinal.west)),
+			origin: this.query(position),
+			cardinally,
+			cells,
+			vacancies,
 		}
 	}
 }
