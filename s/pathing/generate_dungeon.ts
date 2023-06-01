@@ -1,8 +1,8 @@
 
 import {DungeonSettings} from "./dungeon_settings.js"
-import {drunkenly_wander_new_path} from "./routines/drunkenly_wander_new_path.js"
-import {generate_inner_grid_for_tile} from "./routines/generate_inner_grid_for_tile.js"
-import {decide_which_tiles_should_be_subdivided} from "./routines/decide_which_tiles_should_be_subdivided.js"
+import {drunkenly_wander_new_path} from "./tiles/drunkenly_wander_new_path.js"
+import {subdivide_tile_into_grid_cells} from "./cells/subdivide_tile_into_grid_cells.js"
+import {decide_which_tiles_should_be_subdivided} from "./tiles/decide_which_tiles_should_be_subdivided.js"
 
 export function generate_dungeon(settings: DungeonSettings) {
 
@@ -29,7 +29,7 @@ export function generate_dungeon(settings: DungeonSettings) {
 	)
 
 	for (const tile of to_subdivide)
-		tile.children = generate_inner_grid_for_tile(tile, settings)
+		tile.children = subdivide_tile_into_grid_cells(tile, settings)
 
 	return tiles
 }

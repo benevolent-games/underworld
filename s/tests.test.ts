@@ -4,7 +4,7 @@ import {cardinal} from "./tools/cardinal.js"
 import {generate_dungeon} from "./pathing/generate_dungeon.js"
 import {make_text_view_for_dungeon} from "./text/make_text_view_for_dungeon.js"
 
-const random = Randy.seed(59)
+const random = Randy.seed(61)
 const randy = new Randy(random)
 
 const start_time = performance.now()

@@ -3,11 +3,11 @@ import {V2, v2} from "../../tools/v2.js"
 import {Grid9} from "../../primitives/grid9.js"
 import {Place} from "../../primitives/place.js"
 import {DungeonSettings} from "../dungeon_settings.js"
+import {open_junctions_along_path} from "../common/open_junctions_along_path.js"
 import {create_cells_in_path_between_two_cells} from "./create_cells_in_path_between_two_cells.js"
-import {open_junctions_between_cells_along_path} from "./open_junctions_between_cells_along_path.js"
 import {create_cells_inside_tile_at_each_junction} from "./create_cells_inside_tile_at_each_junction.js"
 
-export function generate_inner_grid_for_tile(
+export function subdivide_tile_into_grid_cells(
 		tile: Place,
 		settings: DungeonSettings,
 	) {
@@ -109,7 +109,7 @@ export function sprout_loop_or_dead_end(
 		]
 	}
 
-	open_junctions_between_cells_along_path(full_path_including_connections)
+	open_junctions_along_path(full_path_including_connections)
 
 	return new_cells
 }
