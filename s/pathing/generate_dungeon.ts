@@ -5,7 +5,6 @@ import {subdivide_tile_into_grid_cells} from "./cells/subdivide_tile_into_grid_c
 import {decide_which_tiles_should_be_subdivided} from "./tiles/decide_which_tiles_should_be_subdivided.js"
 
 export function generate_dungeon(settings: DungeonSettings) {
-
 	const {
 		randy,
 		number_of_tiles_between_start_and_end,
