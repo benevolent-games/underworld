@@ -5,6 +5,7 @@ export type Random = () => number
 
 export class Randy {
 	static seed(seed: number): Random {
+		seed = 1_234 + Math.floor(seed * 1_234)
 		function random() {
 			seed = Math.imul(48271, seed) | 0 % 2147483647
 			return (seed & 2147483647) / 2147483648
